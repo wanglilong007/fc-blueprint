@@ -1,0 +1,73 @@
+#################################################################################
+#
+#cloudify FusionCompute built in types and plugins definitions.
+#
+##################################################################################
+
+plugins:
+
+  fc:
+
+    executor: central_deployment_agent
+
+    source: https://github.com/wanglilong007/cloudify-fc-plugin/archive/master.zip
+
+node_types:
+
+  cloudify.fc.nodes.Server:
+
+    derived_from: cloudify.nodes.Compute
+
+    properties:
+
+      site_id:
+
+        default: ''
+
+      image_id:
+
+        default: ''
+
+    interfaces:
+
+      cloudify.interfaces.lifecycle:
+
+        create: fc.fc_plugin.tasks.create
+
+        start: fc.fc_plugin.tasks.start
+
+        stop: fc.fc_plugin.tasks.stop
+
+        delete: fc.fc_plugin.tasks.delete
+
+      cloudify.interfaces.validation:
+
+        creation: fc.fc_plugin.tasks.creation_validation
+
+  cloudify.fc.nodes.WindowsServer:
+
+    derived_from: cloudify.fc.nodes.Server
+
+    properties:
+
+      use_password:
+
+        default: true
+
+    interfaces:
+
+      cloudify.interfaces.worker_installer:
+
+        install: windows_agent_installer.windows_agent_installer.tasks.install
+
+        start: windows_agent_installer.windows_agent_installer.tasks.start
+
+        stop: windows_agent_installer.windows_agent_installer.tasks.stop
+
+        uninstall: windows_agent_installer.windows_agent_installer.tasks.uninstall
+
+        restart: windows_agent_installer.windows_agent_installer.tasks.restart
+
+      cloudify.interfaces.plugin_installer:
+
+        install: windows_plugin_installer.windows_plugin_installer.tasks.install
